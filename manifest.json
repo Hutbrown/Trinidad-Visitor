@@ -1,7 +1,7 @@
 {
   "name": "Trinidad Visitor Guide",
   "short_name": "Trinidad",
-  "description": "The free local guide to Trinidad, Colorado — restaurants, lodging, trails, fishing, history, shops and a live events calendar.",
+  "description": "The free local guide to Trinidad, Colorado - restaurants, lodging, trails, fishing, history, shops and a live events calendar.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
