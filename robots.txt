@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trinidadvisitir.netlify.app/sitemap.xml
