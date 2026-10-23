@@ -131,7 +131,22 @@ function SUBTODAY(){var d=new Date();return d.getFullYear()+"-"+String(d.getMont
 function SUBCLEANURL(){try{var U=new URL(location.href);if(U.searchParams.has("submit")){U.searchParams.delete("submit");history.replaceState(null,"",U.pathname+(U.search||"")+(U.hash||""))}}catch{}}
 var SUBCATS=["Music","Arts & Culture","Food & Drink","Outdoors","Wellness","Family","Community","Sports","Market","Other"];
 var SUBLOG="trinidad_submit_log";
-function FLYERSHRINK(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onerror=function(){rej(new Error("Couldn't open that photo."))};fr.onload=function(){var im=new Image();im.onerror=function(){rej(new Error("That photo format isn't supported. Try a screenshot or JPEG."))};im.onload=function(){try{var M=1600,w=im.naturalWidth,h=im.naturalHeight,k=Math.min(1,M/Math.max(w,h));var c=document.createElement("canvas");c.width=Math.round(w*k);c.height=Math.round(h*k);var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res({data:c.toDataURL("image/jpeg",0.82).split(",")[1],media_type:"image/jpeg"})}catch(e){rej(e)}};im.src=fr.result};fr.readAsDataURL(file)})}
+function FLYERREADURL(blob){return new Promise(function(res,rej){var fr=new FileReader();fr.onerror=function(){rej(new Error("Couldn't open that photo."))};fr.onload=function(){res(String(fr.result||""))};fr.readAsDataURL(blob)})}
+async function FLYERSHRINK(file){
+ if(!file||!file.size)throw new Error("The photo came through empty. Try choosing it from your gallery instead.");
+ var draw=function(src,w,h,M){var k=Math.min(1,M/Math.max(w,h));var c=document.createElement("canvas");c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(src,0,0,c.width,c.height);var d=c.toDataURL("image/jpeg",0.82);return d&&d.indexOf(",")>0?d.split(",")[1]:""};
+ var out="";
+ for(var M of [1600,1200]){
+  try{if(window.createImageBitmap){var bm=await createImageBitmap(file,{imageOrientation:"from-image"});if(bm.width&&bm.height)out=draw(bm,bm.width,bm.height,M);try{bm.close()}catch{}}}catch{}
+  if(out.length>1000)break;
+  try{var url=URL.createObjectURL(file);var im=await new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i)};i.onerror=function(){rej(new Error("x"))};i.src=url});try{URL.revokeObjectURL(url)}catch{}var w=im.naturalWidth||im.width,h=im.naturalHeight||im.height;if(w&&h)out=draw(im,w,h,M)}catch{}
+  if(out.length>1000)break;
+  try{var du=await FLYERREADURL(file);var im2=await new Promise(function(res,rej){var i=new Image();i.onload=function(){res(i)};i.onerror=function(){rej(new Error("x"))};i.src=du});var w2=im2.naturalWidth||im2.width,h2=im2.naturalHeight||im2.height;if(w2&&h2)out=draw(im2,w2,h2,M)}catch{}
+  if(out.length>1000)break}
+ if(out.length>1000)return{data:out,media_type:"image/jpeg"};
+ var t=String(file.type||"").toLowerCase();
+ if(/jpe?g|png|webp|gif/.test(t)&&file.size<2.5e6){var raw=await FLYERREADURL(file);var b64=raw.split(",")[1]||"";if(b64.length>1000)return{data:b64,media_type:t.indexOf("png")>=0?"image/png":t.indexOf("webp")>=0?"image/webp":t.indexOf("gif")>=0?"image/gif":"image/jpeg"}}
+ throw new Error("Couldn't process that photo on this phone ("+(t||"unknown type")+", "+Math.round(file.size/1024)+" KB). Try a screenshot of the flyer, or type the details below.")}
 function FLYERBTN(p){var bs=(0,u.useState)(!1),busy=bs[0],setBusy=bs[1];var es=(0,u.useState)(""),err=es[0],setErr=es[1];var ns=(0,u.useState)(""),note=ns[0],setNote=ns[1];var ref=(0,u.useRef)(null);
  async function pick(e){var file=e.target.files&&e.target.files[0];e.target.value="";if(!file)return;setErr("");setNote("");setBusy(!0);
   try{var img=await FLYERSHRINK(file);var r=await fetch(`${hm}/functions/v1/read-flyer`,{method:"POST",headers:{...Sr(!1),"Content-Type":"application/json"},body:JSON.stringify(img)});var j=await r.json().catch(function(){return{}});
