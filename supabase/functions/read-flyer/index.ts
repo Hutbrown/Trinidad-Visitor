@@ -64,7 +64,8 @@ Today's date is ${today} (America/Denver).
 
 Return ONLY a JSON object, no other text, with these keys (use "" when the flyer doesn't say):
 {
-  "is_event_flyer": true or false,
+  "is_event_flyer": true or false (true for ANY poster or flyer advertising an event, even if the date has already passed or the photo is cluttered),
+  "not_flyer_reason": "only if is_event_flyer is false: a few words on what the photo shows instead",
   "name": "event title",
   "date_text": "dates as a visitor should read them, e.g. 'Sat, Nov 8' or 'Nov 14–16'",
   "start_date": "YYYY-MM-DD",
@@ -79,7 +80,7 @@ Return ONLY a JSON object, no other text, with these keys (use "" when the flyer
   "confidence": "high", "medium" or "low",
   "notes": "anything the person should double-check, e.g. 'year not printed, assumed 2026'"
 }
-Rules: if the year is missing, use the next occurrence on or after today. For recurring events (e.g. 'every Friday'), use the next date and say so in notes. Never invent details that are not on the flyer. If this is not an event flyer, set is_event_flyer to false.`;
+Rules: if a year is printed anywhere on the flyer (including in a logo, e.g. '2026 County Fair'), use it even if that date has passed. If no year appears at all, use the next occurrence on or after today. For recurring events (e.g. 'every Friday'), use the next date and say so in notes. Never invent details that are not on the flyer. If this is not an event flyer, set is_event_flyer to false.`;
 
   let res: Response;
   try {
@@ -113,11 +114,15 @@ Rules: if the year is missing, use the next occurrence on or after today. For re
   let p: Record<string, unknown> = {};
   try { p = m ? JSON.parse(m[0]) : {}; } catch { /* fall through */ }
   if (!m || !Object.keys(p).length) return json({ error: "Couldn't read that flyer. Try a closer, straighter photo." }, 422);
-  if (p.is_event_flyer === false) return json({ error: "That doesn't look like an event flyer." }, 422);
+  if (p.is_event_flyer === false && !p.name) {
+    const why = clean(p.not_flyer_reason, 80);
+    return json({ error: "That doesn't look like an event flyer" + (why ? ` (looks like: ${why})` : "") + ". Try a closer photo of just the flyer." }, 422);
+  }
 
   const start = isoDate(p.start_date);
   let end = isoDate(p.end_date) || start;
   if (end && start && end < start) end = start;
+  const past = !!start && (end || start) < today;
   const cat = CATS.includes(String(p.category)) ? String(p.category) : "";
 
   return json({
@@ -134,6 +139,7 @@ Rules: if the year is missing, use the next occurrence on or after today. For re
       website: clean(p.website, 200),
       admission: clean(p.admission, 80),
     },
+    past,
     confidence: clean(p.confidence, 10) || "medium",
     notes: clean(p.notes, 400),
   });
