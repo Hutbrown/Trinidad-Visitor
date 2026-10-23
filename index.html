@@ -223,7 +223,7 @@ function SUBMITEV(p){var back=p.onBack;
   field("submitter_name","Your name",{req:!0,max:80,ac:"name"}),
   field("submitter_phone","Your phone",{req:!0,max:30,type:"tel",mode:"tel",ac:"tel"}),
   u.default.createElement("div",{"aria-hidden":"true",style:{position:"absolute",left:-9999,top:"auto",width:1,height:1,overflow:"hidden"}},
-   u.default.createElement("label",null,"Company",u.default.createElement("input",{type:"text",tabIndex:-1,autoComplete:"off",value:f.company,onChange:set("company")}))),
+   u.default.createElement("label",null,"Leave this empty",u.default.createElement("input",{type:"text",name:"hp_x7q",tabIndex:-1,autoComplete:"one-time-code","data-lpignore":"true","data-1p-ignore":"true",value:f.company,onChange:set("company")}))),
   u.default.createElement("div",{style:{background:s.paper,borderRadius:10,padding:"10px 12px",fontFamily:"system-ui,sans-serif",fontSize:12,color:s.muted,lineHeight:1.5,marginBottom:14}},"Your name and phone are only seen by the guide's editor, to confirm details. They are never shown in the app."),
   err?u.default.createElement("div",{role:"alert",style:{background:"#FDECEA",border:`1px solid ${s.red}`,borderRadius:10,padding:"10px 12px",fontFamily:"system-ui,sans-serif",fontSize:13,color:s.ink,marginBottom:12}},err):null,
   u.default.createElement("button",{onClick:send,disabled:busy,style:{width:"100%",padding:"14px",background:busy?s.sage:s.rust,border:"none",borderRadius:12,fontFamily:"system-ui,sans-serif",fontSize:15,fontWeight:700,color:s.white,cursor:busy?"default":"pointer"}},busy?"Sending…":"Send for review"))}
