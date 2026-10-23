@@ -31,7 +31,14 @@ function todayDenver(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Denver", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 }
 
-const clean = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+const clean = (v: unknown, max: number) => {
+  if (typeof v !== "string") return "";
+  const t = v.trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  const sp = cut.lastIndexOf(" ");
+  return (sp > max * 0.6 ? cut.slice(0, sp) : cut).replace(/[\s,;:–-]+$/, "") + "…";
+};
 const isoDate = (v: unknown) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v.trim()) ? v.trim() : "");
 
 Deno.serve(async (req) => {
@@ -62,7 +69,7 @@ Return ONLY a JSON object, no other text, with these keys (use "" when the flyer
   "date_text": "dates as a visitor should read them, e.g. 'Sat, Nov 8' or 'Nov 14–16'",
   "start_date": "YYYY-MM-DD",
   "end_date": "YYYY-MM-DD (same as start_date for a one-day event)",
-  "time_text": "e.g. '7 pm' or '10 am – 3 pm'",
+  "time_text": "SHORT, under 45 characters, e.g. '7 pm' or '10 am – 3 pm' (put extra schedule detail in description)",
   "location": "venue name",
   "address": "street address if printed",
   "category": one of ${JSON.stringify(CATS)},
@@ -128,6 +135,6 @@ Rules: if the year is missing, use the next occurrence on or after today. For re
       admission: clean(p.admission, 80),
     },
     confidence: clean(p.confidence, 10) || "medium",
-    notes: clean(p.notes, 300),
+    notes: clean(p.notes, 400),
   });
 });
