@@ -149,7 +149,7 @@ async function FLYERSHRINK(file){
  throw new Error("Couldn't process that photo on this phone ("+(t||"unknown type")+", "+Math.round(file.size/1024)+" KB). Try a screenshot of the flyer, or type the details below.")}
 function FLYERBTN(p){var bs=(0,u.useState)(!1),busy=bs[0],setBusy=bs[1];var es=(0,u.useState)(""),err=es[0],setErr=es[1];var ns=(0,u.useState)(""),note=ns[0],setNote=ns[1];var ref=(0,u.useRef)(null);
  async function pick(e){var file=e.target.files&&e.target.files[0];e.target.value="";if(!file)return;setErr("");setNote("");setBusy(!0);
-  try{var img=await FLYERSHRINK(file);var r=await fetch(`${hm}/functions/v1/read-flyer`,{method:"POST",headers:{...Sr(!1),"Content-Type":"application/json"},body:JSON.stringify(img)});var j=await r.json().catch(function(){return{}});
+  try{var img=await FLYERSHRINK(file);var r=await fetch(`${hm}/functions/v1/read-flyer`,{method:"POST",headers:{...Sr(!1),"Content-Type":"application/json"},body:JSON.stringify({image:img.data,media_type:img.media_type})});var j=await r.json().catch(function(){return{}});
    if(!r.ok||j.error||!j.event)throw new Error(j.error||("Request failed ("+r.status+")"));
    p.onResult(j.event);setNote((j.confidence==="low"?"Some of this was hard to read. ":"")+"Filled in from your flyer — please check every field before "+(p.admin?"saving":"sending")+"."+(j.notes?" Note: "+j.notes:""))}
   catch(x){setErr(String(x&&x.message||x))}setBusy(!1)}
