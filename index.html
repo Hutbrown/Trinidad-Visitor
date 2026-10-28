@@ -71,7 +71,7 @@ function EVPARSE(v){if(!v)return NaN;let s=String(v).trim();if(!s)return NaN;let
 return()=>{dead=!0;clearInterval(id)}},[]);
 if(!sh)return null;
 let plat=RATEPLAT();
-let go=()=>{let url=plat==="ios"?"https://apps.apple.com/app/id6797612798?action=write-review":plat==="android"?"https://play.google.com/store/apps/details?id=com.hutbrown.trinidadvisitor":"mailto:hello@hutsondesignstudio.com?subject=Trinidad%20Colorado%20Guide%20feedback";
+let go=()=>{let url=plat==="ios"?"https://apps.apple.com/app/id6797612798?action=write-review":plat==="android"?"https://play.google.com/store/apps/details?id=com.hutbrown.trinidadvisitor":"mailto:doug@hutsondesignstudio.com?subject=Trinidad%20Colorado%20Guide%20feedback";
 RATESET({done:!0,last:Date.now()});setSh(!1);try{window.open(url,"_blank")}catch{location.href=url}};
 let later=()=>{RATESET({done:!1,last:Date.now()});setSh(!1)};
 let cta=plat==="web"?"Send feedback":"Rate the app";
