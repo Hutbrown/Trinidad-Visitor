@@ -70,14 +70,14 @@ function EVPARSE(v){if(!v)return NaN;let s=String(v).trim();if(!s)return NaN;let
 (0,u.useEffect)(()=>{let dead=!1;let id=setInterval(async()=>{if(dead)return;if(await RATEELIG()){if(!dead){setSh(!0);clearInterval(id)}}},5e3);
 return()=>{dead=!0;clearInterval(id)}},[]);
 if(!sh)return null;
-let plat=RATEPLAT();
-let go=()=>{let url=plat==="ios"?"https://apps.apple.com/app/id6797612798?action=write-review":plat==="android"?"https://play.google.com/store/apps/details?id=com.hutbrown.trinidadvisitor":"mailto:doug@hutsondesignstudio.com?subject=Trinidad%20Colorado%20Guide%20feedback";
+let plat=RATEPLAT();let ua0=(navigator||{}).userAgent||"";let wos=plat==="web"?(/iPhone|iPad|iPod/i.test(ua0)?"ios":/Android/i.test(ua0)?"android":""):"";
+let go=()=>{let url=plat==="ios"?"https://apps.apple.com/app/id6797612798?action=write-review":plat==="android"?"https://play.google.com/store/apps/details?id=com.hutbrown.trinidadvisitor":wos==="ios"?"https://apps.apple.com/app/id6797612798":wos==="android"?"https://play.google.com/store/apps/details?id=com.hutbrown.trinidadvisitor":"mailto:doug@hutsondesignstudio.com?subject=Trinidad%20Colorado%20Guide%20feedback";
 RATESET({done:!0,last:Date.now()});setSh(!1);try{window.open(url,"_blank")}catch{location.href=url}};
 let later=()=>{RATESET({done:!1,last:Date.now()});setSh(!1)};
-let cta=plat==="web"?"Send feedback":"Rate the app";
+let cta=plat!=="web"?"Rate the app":wos?"Get the app & rate it":"Send feedback";
 return u.default.createElement("div",{style:{position:"absolute",left:12,right:12,bottom:"calc(env(safe-area-inset-bottom,0px) + 74px)",background:s.white,border:`1px solid ${s.border}`,borderRadius:14,boxShadow:"0 10px 30px rgba(0,0,0,0.18)",padding:"14px 14px 12px",zIndex:50}},
 u.default.createElement("div",{style:{fontFamily:"Georgia,serif",fontSize:15,fontWeight:700,color:s.ink,marginBottom:4}},"Finding this useful?"),
-u.default.createElement("div",{style:{fontFamily:"system-ui,sans-serif",fontSize:12.5,color:s.muted,lineHeight:1.45,marginBottom:12}},plat==="web"?"This guide is built and maintained here in Trinidad. If something is missing or wrong, I would like to know.":"It is built and maintained right here in Trinidad. A rating helps other visitors find it."),
+u.default.createElement("div",{style:{fontFamily:"system-ui,sans-serif",fontSize:12.5,color:s.muted,lineHeight:1.45,marginBottom:12}},plat!=="web"?"It is built and maintained right here in Trinidad. A rating helps other visitors find it.":wos?"It is built and maintained right here in Trinidad. Get the free app, then leave a rating to help other visitors find it.":"This guide is built and maintained here in Trinidad. If something is missing or wrong, I would like to know."),
 u.default.createElement("div",{style:{display:"flex",gap:8}},
 u.default.createElement("button",{onClick:later,style:{flex:1,padding:"10px",border:`1px solid ${s.border}`,background:s.white,borderRadius:9,fontFamily:"system-ui,sans-serif",fontSize:13,fontWeight:600,color:s.muted,cursor:"pointer"}},"Not now"),
 u.default.createElement("button",{onClick:go,style:{flex:1,padding:"10px",border:"none",background:s.pine,borderRadius:9,fontFamily:"system-ui,sans-serif",fontSize:13,fontWeight:700,color:s.white,cursor:"pointer"}},cta)))}
